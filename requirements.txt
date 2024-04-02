@@ -1,0 +1,4 @@
+elasticsearch>=7
+pyhocon~=0.3
+amundsen-databuilder~=7.4
+pendulum~=2.1

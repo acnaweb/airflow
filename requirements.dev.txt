@@ -1,0 +1,14 @@
+apache-airflow[google]==2.4.3
+mypy==1.5.1
+flake8==6.1.0
+black==22.3.0
+pytest-cov~=4.0
+pytest~=7.0
+twine
+wheel
+python-dotenv
+
+google-api-python-client 
+google-auth-httplib2
+google-auth-oauthlib
+sqlalchemy-bigquery==1.4.4
