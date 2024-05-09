@@ -25,6 +25,11 @@ make build
 make run
 ```
 
+#### Dags
+
+```
+./dags
+```
 
 #### Web Interface
 
