@@ -1,4 +1,13 @@
+apache-airflow-providers-airbyte[http]~=3.3
 elasticsearch>=7
 pyhocon~=0.3
 amundsen-databuilder~=7.4
 pendulum~=2.1
+pandas~=1.4
+openpyxl~=3.1
+minio~=7.1
+xlrd~=2.0
+py2neo~=2021.2
+spacy~=3.6
+pandavro~=1.8
+cramjam~=2.8

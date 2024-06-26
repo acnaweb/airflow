@@ -1,0 +1,5 @@
+apache-airflow[google]==2.4.3
+google-api-python-client 
+google-auth-httplib2
+google-auth-oauthlib
+sqlalchemy-bigquery==1.4.4
