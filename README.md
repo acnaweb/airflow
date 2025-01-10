@@ -1,5 +1,8 @@
 # Airflow
 
+
+
+
 ## Pre-req
 
 Docker & Docker Compose - https://docs.docker.com/compose/install/
@@ -8,20 +11,12 @@ Docker & Docker Compose - https://docs.docker.com/compose/install/
 
 https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html
 
-### Setup
-
-#### Install
-
-```
-make install
-make build
-```
-
 ### Usage
 
 #### Run Airflow
 
 ```
+make install
 make run
 ```
 

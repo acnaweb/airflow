@@ -4,13 +4,15 @@ USER root
 
 RUN apt-get update && \
     apt-get install -y \
-    build-essential \
+    build-essential libaio1 \
     git wget unzip curl \
     openssh-client iputils-ping groff nano telnet && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* \    
     && python -m pip install --upgrade pip 
 
+ADD server/install_oracle_client.sh .
+RUN bash install_oracle_client.sh
 
 USER airflow
 WORKDIR /opt/airflow
@@ -20,3 +22,6 @@ RUN pip install --no-cache-dir apache-airflow==${AIRFLOW_VERSION} -r requirement
     pip install --no-cache-dir -r requirements.oci.txt && \
     pip install --no-cache-dir -r requirements.dbt.txt && \
     pip install --no-cache-dir -r requirements.gcp.txt
+
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/oracle/instantclient
+ENV TNS_ADMIN=/opt/oracle/instantclient/network/admin
