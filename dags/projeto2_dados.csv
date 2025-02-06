@@ -1,0 +1,2 @@
+temperature,wind_speed,condition,precipitation,humidity,feels_like_temp,pressure,visibility,is_day,timestamp,ID
+25.3,10.1,Overcast,0.0,74,26.7,1010.0,10.0,True,2025-01-13 18:30:40.080987,2025-01-13 18:30:40.080987-25.3
