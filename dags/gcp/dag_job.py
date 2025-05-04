@@ -35,14 +35,7 @@ def build_payload(data: dict) -> dict:
     return {
         "overrides": {
             "containerOverrides": [
-                {
-                    "args": [
-                        "python",
-                        "src/main.py",
-                        data["arg1"],
-                        data["arg2"]
-                    ]
-                }
+                {"args": ["python", "src/main.py", data["arg1"], data["arg2"]]}
             ]
         }
     }
@@ -90,7 +83,7 @@ def get_execution_state(data: dict) -> str:
 
 # Definição padrão para o DAG
 default_args = {
-    "owner": "airflow",
+    "owner": "acnaweb",
     "retries": 0,
 }
 
@@ -100,9 +93,9 @@ default_args = {
     schedule_interval=None,
     start_date=None,
     catchup=False,
-    tags=["jobs", "monitoramento"],
+    tags=["jobs", "monitoramento", "tag"],
 )
-def dag_etl():
+def dag_job():
     @task
     def process_conf(**context):
         """
@@ -153,17 +146,11 @@ def dag_etl():
     @task.sensor(poke_interval=20, timeout=5400)
     def wait_job1(task_instance: Context):
         """Monitora a execução do preprocessor."""
-        execution_id = task_instance.xcom_pull(
-            task_ids="start_job1", key="job1_id"
-        )
+        execution_id = task_instance.xcom_pull(task_ids="start_job1", key="job1_id")
         return monitor_execution(execution_id)
 
     # Fluxo de execução do DAG
-    (
-        process_conf()
-        >> start_job1()
-        >> wait_job1()
-    )
+    (process_conf() >> start_job1() >> wait_job1())
 
 
-dag_etl()
+dag_job()

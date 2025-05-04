@@ -6,4 +6,7 @@ pytest~=7.0
 twine
 wheel
 python-dotenv
+requests
+types-requests
+jsonpath-ng
 

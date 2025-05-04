@@ -1,8 +1,5 @@
 # Airflow
 
-
-
-
 ## Pre-req
 
 Docker & Docker Compose - https://docs.docker.com/compose/install/

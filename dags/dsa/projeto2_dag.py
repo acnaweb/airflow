@@ -1,22 +1,29 @@
-#!/usr/bin/env python
-# coding: utf-8
+# Projeto 2 - Extração de Dados via API com Apache Airflow
 
-# Importando bibliotecas necessárias
+# Imports
+import datetime as dt
 import os
 import sqlite3
 import requests
 import datetime
-import pandas as pd 
+import pandas as pd
+from datetime import timedelta
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from datetime import datetime
+
 
 # Definição da função para extrair dados da API
 def dsa_extrai_dados_api():
 
     # Obtendo a data e hora atual
     hoje = datetime.datetime.now()
-    
+
     # Fazendo uma solicitação GET para a API do tempo (coloque aqui sua chave da API)
-    dados_api = requests.get("http://api.weatherapi.com/v1/current.json?key=32144601dd234fa7bfe182919251301&q=Rio de Janeiro&aqi=yes")
-    
+    dados_api = requests.get(
+        "http://api.weatherapi.com/v1/current.json?key=32144601dd234fa7bfe182919251301&q=Rio de Janeiro&aqi=yes"
+    )
+
     # Convertendo a resposta da API em JSON
     dsa_dados = dados_api.json()
 
@@ -31,71 +38,106 @@ def dsa_extrai_dados_api():
         "pressure": [dsa_dados["current"]["pressure_mb"]],
         "visibility": [dsa_dados["current"]["vis_km"]],
         "is_day": [dsa_dados["current"]["is_day"]],
-        "timestamp": [hoje]
+        "timestamp": [hoje],
     }
 
     # Convertendo o dicionário em um DataFrame do Pandas
     return pd.DataFrame(dicionario_dados)
 
+
 # Definição da função para verificar a qualidade dos dados
 def dsa_data_quality(dsa_df_dados):
-    
+
     # Verifica se o DataFrame está vazio
     if dsa_df_dados.empty:
         print("Os dados não foram extraídos")
         return False
-    
+
     # Verifica se há valores nulos no DataFrame
     if dsa_df_dados.isnull().values.any():
         print("Valores ausentes detectados. Tratamento dos dados será necessário.")
 
+
 # Definição da função para transformar os dados
 def dsa_transforma_dados(dsa_df_dados):
-    
+
     # Convertendo a coluna 'is_day' para tipo booleano
     dsa_df_dados["is_day"] = dsa_df_dados["is_day"].astype(bool)
-    
+
     # Criando uma nova coluna 'ID' combinando 'timestamp' e 'temperature'
-    dsa_df_dados["ID"] = dsa_df_dados['timestamp'].astype(str) + "-" + dsa_df_dados["temperature"].astype(str)
-    
+    dsa_df_dados["ID"] = (
+        dsa_df_dados["timestamp"].astype(str)
+        + "-"
+        + dsa_df_dados["temperature"].astype(str)
+    )
+
     return dsa_df_dados
+
 
 # Definição da função para realizar a extração e transformação dos dados
 def dsa_extrai_transforma():
-    
+
     # Chamando a função de extração de dados da API
     dsa_df_dados = dsa_extrai_dados_api()
-    
+
     # Chamando a função de transformação dos dados
     dsa_df_dados = dsa_transforma_dados(dsa_df_dados)
 
     # Chamando a função de verificação da qualidade dos dados
     dsa_data_quality(dsa_df_dados)
-    
+
     return dsa_df_dados
+
 
 # Definição da função principal para realizar o processo ETL
 def dsa_processo_etl():
-    
+
     # Chamando a função de extração e transformação dos dados
     df = dsa_extrai_transforma()
-    
+
     # Definindo o caminho do arquivo CSV
     file_path = "/opt/airflow/dags/projeto2_dados.csv"
-    
+
     # Verifica se o arquivo CSV já existe para decidir se inclui o cabeçalho
     header = not os.path.isfile(file_path)
-    
+
     # Salvando o DataFrame no arquivo CSV no modo append
-    df.to_csv(file_path, mode='a', index=False, header=header)
+    df.to_csv(file_path, mode="a", index=False, header=header)
 
     # Conectando ao banco de dados SQLite (isso criará o arquivo de banco de dados se ele não existir)
-    conn = sqlite3.connect('/opt/airflow/dags/projeto2_database.db')
+    conn = sqlite3.connect("/opt/airflow/dags/projeto2_database.db")
 
     # Salvando o DataFrame no banco de dados SQLite
-    df.to_sql('projeto2_tabela', conn, if_exists='append', index=False)
+    df.to_sql("projeto2_tabela", conn, if_exists="append", index=False)
 
     # Fechando a conexão com o banco de dados
     conn.close()
 
 
+# Argumentos
+default_args = {
+    "owner": "dsa",
+    "depends_on_past": False,
+    "start_date": dt.datetime.today(),
+    "email": ["suporte@datascienceacademy.com.br"],
+    "email_on_failure": False,
+    "email_on_retry": False,
+    "retries": 1,
+    "retry_delay": timedelta(minutes=1),
+}
+
+# DAG
+dsa_dag = DAG(
+    "projeto2_dag",
+    default_args=default_args,
+    description="Projeto 2",
+    schedule_interval=timedelta(minutes=60),
+)
+
+# PythonOperator
+executa_etl = PythonOperator(
+    task_id="projeto2_etl_api", python_callable=dsa_processo_etl, dag=dsa_dag
+)
+
+# Envia a tarefa para execução
+executa_etl
