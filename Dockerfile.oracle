@@ -1,4 +1,6 @@
-FROM apache/airflow:2.4.2-python3.10
+FROM apache/airflow:slim-2.11.0
+
+ENV AIRFLOW_UID=1000
 
 USER root
 

@@ -1,19 +1,15 @@
 import os
-import logging
+
+import jsonpath_ng.ext as jp
 import requests
-from airflow.decorators import dag, task
-from airflow.providers.google.common.hooks.base_google import GoogleBaseHook
 from google.auth import default
 from google.auth.transport.requests import Request
-from airflow.models.variable import Variable
-from airflow.utils.context import Context
-import jsonpath_ng.ext as jp
+from loguru import logger
 
-# Configuração de logging centralizada
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+from airflow.decorators import dag, task
+from airflow.models.variable import Variable
+from airflow.providers.google.common.hooks.base_google import GoogleBaseHook
+from airflow.utils.context import Context
 
 # Configurações do GCP
 GOOGLE_CLOUD_REGION = Variable.get("GOOGLE_CLOUD_REGION")
@@ -22,7 +18,10 @@ GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT", None)
 if GOOGLE_CLOUD_PROJECT is None:
     GOOGLE_CLOUD_PROJECT = Variable.get("GOOGLE_CLOUD_PROJECT")
 
-BASE_URL = f"https://run.googleapis.com/v2/projects/{GOOGLE_CLOUD_PROJECT}/locations/{GOOGLE_CLOUD_REGION}/jobs"
+BASE_URL = (
+    f"https://run.googleapis.com/v2/"
+    f"projects/{GOOGLE_CLOUD_PROJECT}/locations/{GOOGLE_CLOUD_REGION}/jobs"
+)
 
 JOBS = {
     "job1": "job1",

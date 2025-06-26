@@ -3,24 +3,20 @@ export AIRFLOW_UID=1000
 install:
 	python -m venv venv; \
 	. venv/bin/activate; \
-	pip install --upgrade pip; \
+	pip install --upgrade pip setuptools wheel; \
 	pip install pre-commit; \
-	pip install -e .[dev]; \
+	pip install -e .[dev,quality]; \
 	pre-commit install; \
 	git config --bool flake8.strict true; \
 	mkdir -p ./logs ./plugins ./config; \
 
-install_airflow: install
+install_airflow:
 	docker compose up airflow-init --build
 
-formatter:
+quality:
 	black dags
-
-typing: formatter
-	mypy dags
-
-lint: formatter
-	flake8  dags
+	isort dags
+	flake8 dags
 
 test:
 	pytest
