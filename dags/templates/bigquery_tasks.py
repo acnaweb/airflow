@@ -1,7 +1,5 @@
 from airflow.providers.google.cloud.operators.bigquery import (
-    BigQueryCreateEmptyTableOperator,
-    BigQueryInsertJobOperator,
-)
+    BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator)
 
 
 def run_bq_query(query, location="US"):

@@ -1,4 +1,5 @@
-from airflow.providers.google.cloud.operators.pubsub import PubSubPublishMessageOperator
+from airflow.providers.google.cloud.operators.pubsub import \
+    PubSubPublishMessageOperator
 
 
 def publish_message(topic, messages):

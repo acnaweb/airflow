@@ -1,4 +1,5 @@
-from airflow.providers.google.cloud.operators.cloud_run import CloudRunJobRunOperator
+from airflow.providers.google.cloud.operators.cloud_run import \
+    CloudRunJobRunOperator
 
 
 def run_cloud_run_job(project_id, region, job_name):

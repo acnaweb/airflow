@@ -1,8 +1,9 @@
 import os
+
+from templates.gcs_tasks import create_bucket, download_file_from_gcs
+
 from airflow.decorators import dag
 from airflow.models.variable import Variable
-from templates.gcs_tasks import download_file_from_gcs
-
 
 # Configurações do GCP
 GOOGLE_CLOUD_REGION = Variable.get("GOOGLE_CLOUD_REGION")
@@ -27,10 +28,14 @@ default_args = {
     tags=["jobs", "monitoramento", "tag"],
 )
 def dag_gcp():
-    download = download_file_from_gcs(
-        "abc-composer-dags-prd", "data/dsa-p1-entrada.txt", "/tmp/arquivo.csv"
+
+    downloaded = download_file_from_gcs(
+        "bucket-name", "data/filename.csv", "/tmp/arquivo.csv"
     )
 
-    download
+    created_bucket = create_bucket("bucket-playground", GOOGLE_CLOUD_PROJECT)
+
+    (downloaded >> created_bucket)
+
 
 dag_gcp()

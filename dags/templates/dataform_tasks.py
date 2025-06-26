@@ -1,7 +1,6 @@
 from airflow.providers.google.cloud.operators.dataform import (
     DataformCreateCompilationResultOperator,
-    DataformCreateWorkflowInvocationOperator,
-)
+    DataformCreateWorkflowInvocationOperator)
 
 
 def compile_dataform(project_id, region, repo_name, branch="main"):
