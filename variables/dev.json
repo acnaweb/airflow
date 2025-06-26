@@ -1,4 +1,4 @@
 {
-    "GOOGLE_CLOUD_PROJECT": "project",
-    "GOOGLE_CLOUD_REGION": "us-central1"
+    "GOOGLE_CLOUD_PROJECT": "abc-datalake-pipeline-prd",
+    "GOOGLE_CLOUD_REGION": "US"
 }

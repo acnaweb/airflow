@@ -1,5 +1,5 @@
-from airflow.providers.google.cloud.operators.gcs import (
-    GCSCreateBucketOperator, GCSToLocalFilesystemOperator)
+from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator
+from airflow.providers.google.cloud.transfers.gcs_to_local import GCSToLocalFilesystemOperator
 
 
 def create_bucket(bucket_name, project_id):
@@ -12,8 +12,8 @@ def create_bucket(bucket_name, project_id):
 
 def download_file_from_gcs(bucket, object_name, local_path):
     return GCSToLocalFilesystemOperator(
-        task_id=f"download_{object_name.replace('/', '_')}",
-        bucket=bucket,
-        object_name=object_name,
-        filename=local_path,
-    )
+                            task_id=f"download_{object_name.replace('/', '_')}",
+                            bucket=bucket,
+                            object_name=object_name,
+                            filename=local_path,
+                             )

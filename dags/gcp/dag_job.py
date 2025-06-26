@@ -11,12 +11,14 @@ from airflow.models.variable import Variable
 from airflow.providers.google.common.hooks.base_google import GoogleBaseHook
 from airflow.utils.context import Context
 
+
 # Configurações do GCP
 GOOGLE_CLOUD_REGION = Variable.get("GOOGLE_CLOUD_REGION")
 GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT", None)
 
 if GOOGLE_CLOUD_PROJECT is None:
     GOOGLE_CLOUD_PROJECT = Variable.get("GOOGLE_CLOUD_PROJECT")
+
 
 BASE_URL = (
     f"https://run.googleapis.com/v2/"

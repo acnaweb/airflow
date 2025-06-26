@@ -1,5 +1,6 @@
-from airflow.providers.google.cloud.operators.functions import \
-    CloudFunctionInvokeFunctionOperator
+from airflow.providers.google.cloud.operators.functions import (
+    CloudFunctionInvokeFunctionOperator,
+)
 
 
 def invoke_cloud_function(project_id, location, function_name, data=None):
