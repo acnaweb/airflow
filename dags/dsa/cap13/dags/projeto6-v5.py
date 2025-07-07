@@ -121,10 +121,10 @@ with DAG('projeto6v5',
 
     # File Sensor
     wait_for_file = FileSensor(
-        task_id='wait_for_file',
+        task_id=f'wait_for_file_{file_name}',
         filepath=file_name,           # Apenas o nome do arquivo
         fs_conn_id='dsa_filesystem',  # Conexão configurada no Airflow
-        timeout=600,
+        timeout=60,
         poke_interval=30,
         mode='poke'
     )

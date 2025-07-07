@@ -259,12 +259,13 @@ services:
     # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
     volumes:
       - ./variables/dev.json:/opt/airflow/variables/dev.json
+      - ./connections/dev.json:/opt/airflow/connections/dev.json
     command:
       - bash
       - -c
       - > 
         airflow variables import variables/dev.json &&
-        airflow connections import connections/dev.json
+        airflow connections import --overwrite connections/dev.json 
 
   # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
   # or by explicitly targeted on the command line e.g. docker-compose up flower.

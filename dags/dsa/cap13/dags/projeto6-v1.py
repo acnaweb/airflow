@@ -40,10 +40,11 @@ with DAG('projeto6v1',
     )
 
     # File Sensor
-    wait_for_file = FileSensor(task_id='wait_for_file',
+    wait_for_file = FileSensor(
+                            task_id=f'wait_for_file_{file_name}',
                                filepath=file_name,           # Apenas o nome do arquivo
                                fs_conn_id='dsa_filesystem',  # Conexão configurada no Airflow
-                               timeout=600,                  # Timeout de 10 minutos
+                               timeout=60,                  # Timeout de 10 minutos
                                poke_interval=5,              # Intervalo de 5 segundos para testes rápidos
                                mode='poke')
 
