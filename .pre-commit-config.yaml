@@ -11,14 +11,14 @@ repos:
     hooks:
     - id: flake8
       name: Run Code Quality
-      files: ^dags/     
+      files: dags/     
       
 -   repo: https://github.com/pycqa/isort
     rev: 5.13.2  # ou a versão mais recente
     hooks:
     - id: isort
       name: Run Isort
-      files: ^dags/        
+      files: dags/        
 
 -   repo: local
     hooks:
