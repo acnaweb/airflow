@@ -1,0 +1,21 @@
+[
+    {
+            "conn_id": "my-conn-id",
+            "conn_type": "my-conn-type",
+            "login": "my-login",
+            "password": "my-password",
+            "host": "my-host",
+            "port": 1234,
+            "schema": "my-schema",
+            "extra": {
+                "param1": "val1",
+                "param2": "val2"
+            }        
+    },
+    {
+        "conn_id": "gcp_default",
+        "conn_type": "google_cloud_platform",
+        "description": "Conexão padrão GCP com chave de serviço",
+        "extra": "{\"project\": \"seu-projeto-gcp\", \"key_path\": \"/opt/airflow/keys/gcp-service-account.json\"}"
+    }
+]

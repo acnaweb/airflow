@@ -33,5 +33,8 @@ clean:
 validate_imports:
 	docker compose exec airflow-worker airflow dags list-import-errors
 
+set_variables:
+	docker compose up airflow-cli
+
 test_conn_gcp:
 	docker compose exec airflow-worker airflow connections test gcp
