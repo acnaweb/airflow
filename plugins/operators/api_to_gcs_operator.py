@@ -29,7 +29,7 @@ class ApiToGCSOperator(BaseSafeOperator):
 
         data = response.json()
 
-        self.log.info(data)
+        self.log.debug(data)
 
         # Opcional: timestamp no arquivo
         timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%S")

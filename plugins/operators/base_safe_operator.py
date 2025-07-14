@@ -26,7 +26,8 @@ class BaseSafeOperator(BaseOperator):
             {traceback.format_exc()}
             """
 
-            self.log.error(error_msg)
+            # self.log.error(error_msg)
+            # self.log.exception("Erro executando task")
 
             if self.alert_email:
                 self.log.info(f"Enviando email de erro para: {self.alert_email}")
