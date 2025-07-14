@@ -1,0 +1,53 @@
+@startuml data-ingestion-streaming
+
+title "Ingestão de Dados em Tempo Real\ncom Pub/Sub e Dataflow"
+
+hide footbox
+skinparam ParticipantPadding 20
+skinparam BoxPadding 15
+skinparam ActorStyle awesome
+skinparam BackgroundColor #FFFFFF
+skinparam Sequence {
+    ArrowThickness 1
+    LifeLineBorderColor #777777
+    LifeLineBackgroundColor #DDDDDD
+    ParticipantBorderColor #004D99
+    ParticipantBackgroundColor #EDF4FF
+    ActorBorderColor #004D99
+    ActorBackgroundColor #CDE3FF
+}
+
+actor Produtor as Producer
+participant "Pub/Sub\nTópico" as PubSub
+participant "Dataflow\nIngestão (Streaming)" as DF_Ingest
+database "Cloud Storage\n(TB)" as GCS_TB
+participant "Cloud Function\nTrigger" as CF_Trigger
+participant "Dataflow\nTransformação" as DF_Transf
+database "BigQuery\nTR" as BQ_TR
+participant "Dataform\n(opcional)" as Dataform
+database "BigQuery\nRF" as BQ_RF
+actor "Looker / BI" as Looker
+
+== Ingestão bruta (TB) ==
+Producer -> PubSub : publish(msg JSON)
+PubSub -> DF_Ingest ++ : ⚡ entrega via\nSubscription (stream)
+DF_Ingest -> GCS_TB : write(raw file\nParquet/JSON)
+DF_Ingest -->> PubSub : ack
+
+== Gatilho para transformação (TR) ==
+GCS_TB -> CF_Trigger ++ : ⚡ storage event\nobject.finalize
+CF_Trigger -> DF_Transf : start job\n(PipelineID)
+
+== Limpeza & enriquecimento ==
+DF_Transf -> BQ_TR : INSERT cleaned/enriched rows
+DF_Transf -->> CF_Trigger : status OK
+CF_Trigger --> GCS_TB : update metadata (opcional)
+
+== Modelagem semântica (RF) ==
+note over Dataform : job agendado (Composer\nou Scheduler)
+Dataform -> BQ_TR : SELECT transform SQL
+Dataform -> BQ_RF : CREATE/REPLACE\nmaterializadas
+
+== Consumo analítico ==
+Looker -> BQ_RF : query dashboards
+@enduml

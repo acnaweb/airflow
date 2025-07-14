@@ -258,8 +258,8 @@ services:
       CONNECTION_CHECK_MAX_COUNT: "0"
     # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
     volumes:
-      - ./variables/dev.json:/opt/airflow/variables/dev.json
-      - ./connections/dev.json:/opt/airflow/connections/dev.json
+      - ./setup/variables/dev.json:/opt/airflow/variables/dev.json
+      - ./setup/connections/dev.json:/opt/airflow/connections/dev.json
     command:
       - bash
       - -c

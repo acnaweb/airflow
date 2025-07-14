@@ -1,0 +1,9 @@
+{
+    "GOOGLE_CLOUD_PROJECT": "datalake-pipeline-prd",
+    "GOOGLE_CLOUD_REGION": "US",    
+    "file_name": "arquivo.json",
+    "dest_path": "/opt/airflow/dags/dsa/cap13/dags/destino/arquivo.json",
+    "api_key": "",
+    "db_path": "/opt/airflow/dags/dsa/cap13/dags/database/dsa.db",
+    "table_name": "weather_data"
+}

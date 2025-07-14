@@ -35,6 +35,6 @@ quality = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["dags"]
+where = ["dags", "plugins"]
 
 [project.scripts]

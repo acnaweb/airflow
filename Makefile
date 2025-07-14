@@ -21,7 +21,7 @@ quality:
 test:
 	pytest
 
-run:
+up:
 	docker compose up -d --build
 
 down:

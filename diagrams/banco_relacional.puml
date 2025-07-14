@@ -1,0 +1,48 @@
+@startuml data-ingestion-banco-relacional
+
+title "Ingestão de Dados de Banco Relacional\ncom Cloud Composer, Dataflow e BigQuery"
+
+hide footbox
+skinparam ParticipantPadding 20
+skinparam BoxPadding 15
+skinparam ActorStyle awesome
+skinparam BackgroundColor #FFFFFF
+skinparam Sequence {
+    ArrowThickness 1
+    LifeLineBorderColor #777777
+    LifeLineBackgroundColor #DDDDDD
+    ParticipantBorderColor #004D99
+    ParticipantBackgroundColor #EDF4FF
+    ActorBorderColor #004D99
+    ActorBackgroundColor #CDE3FF
+}
+
+actor "Cloud Composer / Scheduler" as Scheduler
+database "Banco Relacional\n(PostgreSQL / Oracle / etc)" as SourceDB
+participant "Datastream ou\nConector JDBC" as Extractor
+database "Cloud Storage\n(TB)" as GCS_TB
+participant "Dataflow / Spark\nTransformação" as TransformJob
+database "BigQuery\nTR" as BQ_TR
+participant "Dataform\n(opcional)" as Dataform
+database "BigQuery\nRF" as BQ_RF
+actor "Looker / BI" as Looker
+
+== Extração da base de dados ==
+Scheduler -> Extractor : Trigger agendado (cron/job)
+Extractor -> SourceDB : Leitura full ou incremental (CDC)
+SourceDB --> Extractor : Dados modificados
+Extractor -> GCS_TB : Salva snapshot ou delta (CSV/Parquet/JSON)
+
+== Transformação (TR) ==
+Scheduler -> TransformJob : Trigger transformação (por evento ou agendamento)
+TransformJob -> GCS_TB : Leitura dos arquivos extraídos
+TransformJob -> BQ_TR : Escrita dos dados limpos/enriquecidos
+
+== Modelagem semântica (RF) ==
+note over Dataform : exec. via Composer/Scheduler
+Dataform -> BQ_TR : SELECT transform SQL
+Dataform -> BQ_RF : Cria tabelas finais RF
+
+== Consumo analítico ==
+Looker -> BQ_RF : Query dashboards
+@enduml

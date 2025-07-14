@@ -1,0 +1,31 @@
+{
+  "my-conn-id": {
+    "conn_type": "my-conn-type",
+    "login": "my-login",
+    "password": "my-password",
+    "host": "my-host",
+    "port": 1234,
+    "schema": "my-schema",
+    "extra": {
+      "param1": "val1",
+      "param2": "val2"
+    }
+  },
+  "dsa_filesystem": {
+    "conn_type": "filesystem",
+    "host": "/opt/airflow/dags/dsa/cap13/dags/fonte",
+    "description": "Diretório monitorado para arquivos de entrada"
+  },
+  "google_cloud_default": {
+    "conn_type": "google_cloud_platform",
+    "project": "my-gcp-project",
+    "keyfile_dict": {
+      "type": "service_account",
+      "project_id": "my-gcp-project-id",
+      "private_key_id": "my-private-key-id",
+      "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+      "client_email": "my-service-account-email",
+      "client_id": "my-client-id",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth"      
+  }
+}

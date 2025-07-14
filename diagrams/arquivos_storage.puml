@@ -1,0 +1,50 @@
+@startuml data-ingestion-arquivos-storage
+
+title "Ingestão de Arquivos\ncom Cloud Storage, Dataflow e BigQuery"
+
+
+hide footbox
+skinparam ParticipantPadding 20
+skinparam BoxPadding 15
+skinparam ActorStyle awesome
+skinparam BackgroundColor #FFFFFF
+skinparam Sequence {
+    ArrowThickness 1
+    LifeLineBorderColor #777777
+    LifeLineBackgroundColor #DDDDDD
+    ParticipantBorderColor #004D99
+    ParticipantBackgroundColor #EDF4FF
+    ActorBorderColor #004D99
+    ActorBackgroundColor #CDE3FF
+}
+
+actor "Sistema Externo\nou Parceiro" as ExternalSystem
+participant "Storage Transfer\nou gsutil/sftp" as TransferService
+database "Cloud Storage\n(TB)" as GCS_TB
+participant "Cloud Function\nTrigger" as CF_Trigger
+participant "Dataflow / Spark\nTransformação" as TransformJob
+database "BigQuery\nTR" as BQ_TR
+participant "Dataform\n(opcional)" as Dataform
+database "BigQuery\nRF" as BQ_RF
+actor "Looker / BI" as Looker
+
+== Ingestão do arquivo externo (TB) ==
+ExternalSystem -> TransferService : Envia arquivo para bucket
+TransferService -> GCS_TB : Salva arquivo (.csv/.json/.parquet)
+
+== Gatilho automático para transformação ==
+GCS_TB -> CF_Trigger ++ : ⚡ storage event (object finalize)
+CF_Trigger -> TransformJob : Inicia transformação
+
+== Transformação para TR ==
+TransformJob -> GCS_TB : Lê arquivos TB
+TransformJob -> BQ_TR : Escreve dados tratados
+
+== Modelagem semântica (RF) ==
+note over Dataform : job via Composer/Scheduler
+Dataform -> BQ_TR : SELECT transform SQL
+Dataform -> BQ_RF : Cria tabelas finais RF
+
+== Consumo analítico ==
+Looker -> BQ_RF : Query dashboards
+@enduml

@@ -1,0 +1,51 @@
+@startuml data-ingestion-mensageria-externa
+
+title "Ingestão de Dados Externos\ncom Cloud Storage, Dataflow e BigQuery"
+
+hide footbox
+skinparam ParticipantPadding 20
+skinparam BoxPadding 15
+skinparam ActorStyle awesome
+skinparam BackgroundColor #FFFFFF
+skinparam Sequence {
+    ArrowThickness 1
+    LifeLineBorderColor #777777
+    LifeLineBackgroundColor #DDDDDD
+    ParticipantBorderColor #004D99
+    ParticipantBackgroundColor #EDF4FF
+    ActorBorderColor #004D99
+    ActorBackgroundColor #CDE3FF
+}
+
+actor "Sistema de Mensageria\n(Kafka / RabbitMQ / MQTT)" as Broker
+participant "Bridge / Conector\n(Kafka → PubSub ou HTTP)" as Bridge
+participant "Pub/Sub\nTópico de Entrada" as PubSub
+participant "Dataflow\n(Stream ou Batch)" as DF_Streaming
+database "Cloud Storage\n(TB)" as GCS_TB
+participant "Dataflow / Spark\nTransformação" as TransformJob
+database "BigQuery\nTR" as BQ_TR
+participant "Dataform\n(opcional)" as Dataform
+database "BigQuery\nRF" as BQ_RF
+actor "Looker / BI" as Looker
+
+== Integração com GCP ==
+Broker -> Bridge : envia eventos
+Bridge -> PubSub : publica mensagem JSON
+
+== Ingestão (TB) ==
+PubSub -> DF_Streaming ++ : streaming pipeline
+DF_Streaming -> GCS_TB : grava dado bruto (Parquet/JSON)
+
+== Transformação (TR) ==
+note over GCS_TB : Gatilho por tempo ou volume
+TransformJob -> GCS_TB : lê arquivos
+TransformJob -> BQ_TR : escreve dados tratados
+
+== Modelagem semântica (RF) ==
+note over Dataform : execução agendada
+Dataform -> BQ_TR : SELECT transform SQL
+Dataform -> BQ_RF : cria tabelas RF
+
+== Consumo analítico ==
+Looker -> BQ_RF : query dashboards
+@enduml

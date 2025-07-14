@@ -1,5 +1,60 @@
 # Airflow
 
+## Tipos de Fontes de Ingestão de Dados (Sources)
+
+| Tipo de Fonte           | Exemplos de Origem                          | Estratégia de Ingestão        | Ferramentas GCP Recomendadas                                          |
+|-------------------------|---------------------------------------------|-------------------------------|------------------------------------------------------------------------|
+| **Streaming (eventos)** | Kafka, Pub/Sub, IoT Devices, Logs           | Ingestão contínua (real-time) | Pub/Sub, Dataflow (streaming), IoT Core *(deprecated)*                |
+| **API externa**         | APIs REST, SOAP, GraphQL                    | Agendamento / polling         | Cloud Scheduler + Cloud Run / Cloud Functions                         |
+| **Arquivos em storage** | Cloud Storage, SFTP, buckets externos       | Event-driven ou batch         | Cloud Storage, Eventarc, Storage Transfer Service                     |
+| **Banco relacional**    | MySQL, PostgreSQL, Oracle, SQL Server       | Replicação / CDC              | Datastream, Dataflow (JDBC), Cloud SQL, BigQuery Federation           |
+| **Data warehouses**     | Snowflake, Redshift, Teradata               | Export/Import programado      | BigQuery Transfer Service, Cloud Functions, Storage Import            |
+| **Arquivos locais**     | CSV/Excel locais, diretórios SFTP/FTP       | Upload manual ou integração   | Storage Transfer Service, Cloud Run (upload handler)                  |
+| **SaaS (aplicações)**   | Salesforce, Google Ads, SAP, GA4            | Conectores gerenciados        | BigQuery Data Transfer Service, Airbyte, Fivetran                     |
+| **Mensageria externa**  | Kafka, RabbitMQ, MQTT                       | Conector ou bridge            | Pub/Sub Kafka connector, Dataflow, Confluent Cloud                    |
+| **Logs e métricas**     | Stackdriver, Prometheus, ELK, Datadog       | Streaming ou export batch     | Logging export → Pub/Sub, Ops Agent, Monitoring API                   |
+| **Emails e anexos**     | Caixas de e-mail (IMAP/SMTP)                | Polling e parsing de anexos   | Gmail API + Cloud Functions + Cloud Storage                           |
+
+#### API externa
+
+![](diagrams/data-ingestion-api.png)
+
+#### Arquivos em storage
+
+![](diagrams/data-ingestion-arquivos-storage.png)
+
+#### Banco relacional
+
+![](diagrams/data-ingestion-banco-relacional.png)
+
+#### Mensageria externa
+
+![](diagrams/data-ingestion-mensageria-externa.png)
+
+#### Arquivos locais
+
+![](diagrams/data-ingestion-file-upload.png)
+
+#### SaaS (aplicações)
+
+![](diagrams/data-ingestion-saas.png)
+
+#### Streaming (eventos)
+
+![](diagrams/data-ingestion-streaming.png)
+
+## Classificação por Modo de Ingestão
+
+| Modo de Ingestão | Fontes Comuns                                      |
+|------------------|----------------------------------------------------|
+| **Streaming**     | Pub/Sub, Kafka, IoT, Logs                          |
+| **Batch (lote)**  | Arquivos, bancos, SaaS, API                        |
+| **CDC (change data capture)** | Bancos relacionais, ERP (SAP)                  |
+| **Event-driven**  | Storage (object finalized), Pub/Sub, Webhooks     |
+| **Manual/Híbrido**| Upload manual, coleta por agendamento              |
+
+
+
 ## Pre-req
 
 Docker & Docker Compose - https://docs.docker.com/compose/install/
