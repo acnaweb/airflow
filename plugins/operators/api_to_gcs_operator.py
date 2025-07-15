@@ -1,36 +1,45 @@
+import os
 import requests
 import json
 import pandas as pd
 import gzip
 from typing import Optional
-from google.cloud import storage
 from datetime import datetime
 from operators.base_safe_operator import BaseSafeOperator
-
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from google.cloud import storage
 
 class ApiToGCSOperator(BaseSafeOperator):
     """
     Operator que faz uma requisição HTTP GET a uma API e salva o conteúdo em um bucket do GCS.
     Pode salvar como .json ou .parquet, com ou sem compressão gzip.
+
+    A autenticação segue esta ordem:
+    1. GOOGLE_APPLICATION_CREDENTIALS
+    2. Airflow Connection via gcp_conn_id
     """
 
     def __init__(
-        self,
-        api_url: str,
-        gcs_bucket: str,
-        gcs_path: str,
-        save_as_parquet: bool = False,
-        compression: Optional[str] = None,  # 'gzip' ou None
-        gcp_conn_id: str = "google_cloud_default",
-        **kwargs
-    ):
+            self,
+            api_url: str,
+            gcs_bucket: str,
+            gcs_path: str,
+            save_as_parquet: bool = False,
+            compression: Optional[str] = None,
+            gcp_conn_id: Optional[str] = "google_cloud_default",
+            alert_email: Optional[str] = None,
+            **kwargs
+        ):        
+        super().__init__(**kwargs)
+        self.gcp_conn_id = gcp_conn_id
+        self.alert_email = alert_email
+
         self.api_url = api_url
         self.gcs_bucket = gcs_bucket
         self.gcs_path = gcs_path
         self.save_as_parquet = save_as_parquet
         self.compression = compression
-        self.gcp_conn_id = gcp_conn_id
-        super().__init__(**kwargs)
+                                      
 
     def run_safe(self, context):
         self.log.info(f"Fazendo requisição para: {self.api_url}")
@@ -38,11 +47,10 @@ class ApiToGCSOperator(BaseSafeOperator):
         response.raise_for_status()
 
         data = response.json()
-        self.log.debug(data)
+        self.log.debug(f"Dados recebidos: {str(data)[:500]}")
 
         timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%S")
 
-        # Escolher extensão do arquivo com base na compressão e formato
         ext = ".parquet" if self.save_as_parquet else ".json"
         if self.compression == "gzip":
             ext += ".gz"
@@ -50,8 +58,9 @@ class ApiToGCSOperator(BaseSafeOperator):
         filename = f"{self.gcs_path.rstrip('/')}/data_{timestamp}{ext}"
         self.log.info(f"Salvando arquivo em: gs://{self.gcs_bucket}/{filename}")
 
-        client = storage.Client()
-        bucket = client.get_bucket(self.gcs_bucket)
+        # ✅ Agora usando método da superclasse
+        client = self.get_gcp_storage_client()
+        bucket = client.bucket(self.gcs_bucket)
         blob = bucket.blob(filename)
 
         if self.save_as_parquet:
@@ -67,4 +76,20 @@ class ApiToGCSOperator(BaseSafeOperator):
                 content_type = "application/json"
             blob.upload_from_string(json_data, content_type=content_type)
 
-        self.log.info("Upload para o GCS concluído com sucesso.")
+        self.log.info("✅ Upload para o GCS concluído com sucesso.")
+
+    def get_gcp_storage_client(self):
+        """
+        Retorna um client autenticado do Google Cloud Storage.
+
+        Prioridade:
+        1. GOOGLE_APPLICATION_CREDENTIALS (variável de ambiente)
+        2. gcp_conn_id (conexão configurada na UI do Airflow)
+        """
+        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS"):
+            self.log.info("🔐 Autenticando com GOOGLE_APPLICATION_CREDENTIALS.")
+            return storage.Client()
+        else:
+            self.log.info(f"🔐 Autenticando via gcp_conn_id='{self.gcp_conn_id}'.")
+            hook = GCSHook(gcp_conn_id=self.gcp_conn_id)
+            return hook.get_conn()
