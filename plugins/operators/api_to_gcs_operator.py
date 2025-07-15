@@ -93,3 +93,5 @@ class ApiToGCSOperator(BaseSafeOperator):
             self.log.info(f"🔐 Autenticando via gcp_conn_id='{self.gcp_conn_id}'.")
             hook = GCSHook(gcp_conn_id=self.gcp_conn_id)
             return hook.get_conn()
+        
+        
