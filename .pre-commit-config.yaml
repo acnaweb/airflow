@@ -12,7 +12,7 @@ repos:
     hooks:
     - id: flake8
       name: Run Code Quality
-      files: dags/     
+      files: dags/ plugins/    
 
 -   repo: local
     hooks:
