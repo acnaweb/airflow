@@ -16,6 +16,7 @@ dependencies = [
   "pendulum~=2.1",
   "requests~=2.25",
   "apache-airflow[google]~=2.10",
+  "pyarrow"
 ]
 
 [project.urls]

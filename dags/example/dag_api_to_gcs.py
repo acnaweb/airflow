@@ -7,7 +7,7 @@ from operators.api_to_gcs_operator import ApiToGCSOperator
 from airflow import DAG
 
 with DAG(
-    dag_id="api_to_gcs_dag",
+    dag_id="dag_api_to_gcs",
     start_date=datetime(2023, 1, 1),
     schedule_interval="@daily",
     catchup=False,
