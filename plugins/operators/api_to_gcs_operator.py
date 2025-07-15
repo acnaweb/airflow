@@ -4,7 +4,7 @@ import json
 import pandas as pd
 import gzip
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from operators.base_safe_operator import BaseSafeOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from google.cloud import storage
@@ -49,7 +49,9 @@ class ApiToGCSOperator(BaseSafeOperator):
         data = response.json()
         self.log.debug(f"Dados recebidos: {str(data)[:500]}")
 
-        timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%S")
+        
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+
 
         ext = ".parquet" if self.save_as_parquet else ".json"
         if self.compression == "gzip":
