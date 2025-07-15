@@ -16,7 +16,7 @@ from airflow.decorators import dag
         " como JSON usando operador customizado."
     ),
 )
-def api_to_gcs_pipeline():
+def demo_api_to_gcs():
     export_api_data = ApiToGCSOperator(
         task_id="json_sem_gzip",
         api_url="https://randomuser.me/api/",
@@ -27,4 +27,4 @@ def api_to_gcs_pipeline():
     export_api_data  # registra no DAG
 
 
-api_to_gcs_pipeline()
+demo_api_to_gcs()

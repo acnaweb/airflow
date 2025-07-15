@@ -40,4 +40,5 @@ test_conn_gcp:
 	docker compose exec airflow-worker airflow connections test gcp
 
 integrated_test:
-	python tests/integrated/test_api_to_gcs_operator.py
+	# python tests/integrated/test_api_to_gcs_operator.py
+	python tests/integrated/test_api_to_bq_operator.py
