@@ -1,3 +1,4 @@
 loguru~=0.7
 requests~=2.25
 pendulum~=2.1
+gusty~=0.23

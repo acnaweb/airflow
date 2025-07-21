@@ -1,0 +1,21 @@
+description: "An example of a DAG created using gusty!"
+doc_md: |-
+  This is a longform description,
+  which can be accessed from Airflow's
+  Graph view for your DAG. It looks
+  like a tiny poem.
+schedule_interval: "1 0 * * *"
+default_args:
+    owner: airflow
+    depends_on_past: False
+    start_date: !days_ago 1
+    email: airflow@example.com
+    email_on_failure: False
+    email_on_retry: False
+    retries: 1
+    retry_delay: !timedelta 
+        minutes: 5
+tags:
+  - docs
+  - demo
+  - hello    

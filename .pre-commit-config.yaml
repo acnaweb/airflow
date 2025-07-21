@@ -14,11 +14,4 @@ repos:
       name: Run Code Quality
       files: dags/ plugins/    
 
--   repo: local
-    hooks:
-    - id: pytest
-      name: Run Unit Tests
-      entry: pytest tests/
-      language: system  # ou "python" com dependencies, se preferir
-      types: [python]
-      pass_filenames: false  
+

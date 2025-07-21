@@ -1,0 +1,4 @@
+operator: airflow.operators.bash.BashOperator
+bash_command: echo $MY_ENV_VAR
+env:
+    MY_ENV_VAR: "Hello!"

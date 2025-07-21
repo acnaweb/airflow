@@ -8,7 +8,7 @@ install:
 	pip install -e .[dev,quality]; \
 	pre-commit install; \
 	git config --bool flake8.strict true; \
-	mkdir -p ./logs ./plugins ./config; \
+	mkdir -p ./logs ./config; \
 
 install_airflow:
 	docker compose up airflow-init --build
