@@ -835,7 +835,6 @@ fabric.properties
 .git
 .env
 .DS_Store
-airflow_settings.yaml
 __pycache__/
 astro
 .venv
