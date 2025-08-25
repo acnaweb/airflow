@@ -1,0 +1,7 @@
+{
+    "study-gcp": {
+        "project_id": "study-gcp-398200",
+        "location": "us-east1",
+        "raw_bucket": "acnaweb-bucket-general"
+    }
+}

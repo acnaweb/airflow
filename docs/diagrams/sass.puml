@@ -1,0 +1,50 @@
+@startuml data-ingestion-saas
+
+title "Ingestão de Dados SaaS\ncom Pub/Sub, Dataflow e BigQuery"
+
+hide footbox
+skinparam ParticipantPadding 20
+skinparam BoxPadding 15
+skinparam ActorStyle awesome
+skinparam BackgroundColor #FFFFFF
+skinparam Sequence {
+    ArrowThickness 1
+    LifeLineBorderColor #777777
+    LifeLineBackgroundColor #DDDDDD
+    ParticipantBorderColor #004D99
+    ParticipantBackgroundColor #EDF4FF
+    ActorBorderColor #004D99
+    ActorBackgroundColor #CDE3FF
+}
+
+actor "Agendador\n(Cloud Scheduler / Composer)" as Scheduler
+participant "BigQuery Data Transfer\nou Airbyte / Fivetran" as Connector
+participant "SaaS (Salesforce,\nGoogle Ads, SAP...)" as SaaS_App
+database "Cloud Storage\n(TB) (opcional)" as GCS_TB
+database "BigQuery\nTR" as BQ_TR
+participant "Dataform\n(opcional)" as Dataform
+database "BigQuery\nRF" as BQ_RF
+actor "Looker / BI" as Looker
+
+== Extração de dados do SaaS ==
+Scheduler -> Connector : Trigger agendado
+Connector -> SaaS_App : Consulta dados via API
+SaaS_App --> Connector : Retorna dados (JSON/CSV)
+
+alt Conector → BQ direto
+Connector -> BQ_TR : Load direto (TR, se limpo)
+
+else Conector → GCS (TB)
+Connector -> GCS_TB : Escreve dados brutos
+Scheduler -> BQ_TR : Load via transformação (Dataflow/dbt)
+
+end
+
+== Modelagem semântica (RF) ==
+note over Dataform : job via Composer ou Scheduler
+Dataform -> BQ_TR : SELECT transform SQL
+Dataform -> BQ_RF : Cria tabelas finais RF
+
+== Consumo analítico ==
+Looker -> BQ_RF : Query dashboards
+@enduml

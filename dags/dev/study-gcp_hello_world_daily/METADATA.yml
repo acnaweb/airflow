@@ -1,0 +1,19 @@
+doc_md: |-
+  This is a longform description,
+  which can be accessed from Airflow's
+  Graph view for your DAG. It looks
+  like a tiny poem.
+schedule: "0 0 * * *"
+catchup: False
+default_args:
+    start_date: !days_ago 28    
+    retries: 1
+    retry_delay: !timedelta 
+      minutes: 5
+params:
+    mensagem: "Estou gostando"    
+tags:
+  - "project:study-gcp"  
+  - "owner:produtos"
+  - "domain:cdp"
+  - "pii:false"  

@@ -1,0 +1,23 @@
+description: "Sales Daily: extrai do GCS, transforma, valida, carrega no BigQuery e executa procedure"
+schedule_interval: "0 3 * * *"
+catchup: false
+
+default_args:
+    start_date: !days_ago 28    
+    retries: 0
+    retry_delay: !timedelta 
+      minutes: 5
+
+params:
+    project_id: "study-gcp-398200"
+    location: "us-east1"
+    raw_bucket: "acnaweb-bucket-general"
+    dataset: "raw"
+    table: "stg_vendas"
+    gcp_conn_id: "google-cloud-default-study-gcp"
+    
+tags:
+    - "project:study-gcp"
+    - "owner:comercial"
+    - "domain:sales"
+    - "pii:false"

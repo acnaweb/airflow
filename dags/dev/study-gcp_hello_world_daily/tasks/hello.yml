@@ -1,0 +1,6 @@
+operator: airflow.operators.bash.BashOperator
+dependencies:
+  - hi
+bash_command: |
+  echo Deu certo!
+  echo {{ params.mensagem }}
